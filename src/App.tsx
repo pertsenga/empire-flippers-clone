@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import {
   List,
   message,
+  Pagination,
   Spin
 } from 'antd'
 import Layout from './components/Layout'
@@ -16,12 +17,16 @@ const App = () => {
   const [listings, setListings] = useState<Listing[]>([])
   const [isGridLayout, setIsGridLayout] = useState<boolean>(true)
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalListings, setTotalListings] = useState<number>(0)
 
   useEffect(() => {
     setIsLoading(true)
 
     fetch(`${LISTINGS_API}?${new URLSearchParams({
-      q: searchTerm
+      q: searchTerm,
+      limit: '10',
+      page: currentPage.toString()
     })}`)
       .then(res => res.json())
       .then((res: ListingApiResult) => {
@@ -29,19 +34,25 @@ const App = () => {
           throw Error('An error occurred')
         }
 
+        // console.log(res)
         setListings(res.data.listings)
+        setTotalListings(res.data.count)
       })
       .catch((error: Error) => {
         message.error(error.message, 3)
       })
       .finally(() => setIsLoading(false))
-  }, [searchTerm])
+  }, [searchTerm, currentPage])
+
 
   return (
     <Layout
       onItemLayoutChange={layout => setIsGridLayout(layout === 'grid')}
       itemLayout={isGridLayout ? 'grid' : 'rows'}
-      onSearch={setSearchTerm}
+      onSearch={searchTerm => {
+        setCurrentPage(1)
+        setSearchTerm(searchTerm)
+      }}
     >
       <Spin spinning={isLoading}>
         <List
@@ -52,6 +63,12 @@ const App = () => {
               <ListingCard data={listing} />
             </List.Item>
           )}
+        />
+        <Pagination
+          current={currentPage}
+          total={totalListings}
+          showSizeChanger={false}
+          onChange={page => setCurrentPage(page)}
         />
       </Spin>
     </Layout>
