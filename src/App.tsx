@@ -39,7 +39,6 @@ const App = () => {
           throw Error('An error occurred')
         }
 
-        // console.log(res)
         setListings(res.data.listings)
         setTotalListings(res.data.count)
       })
