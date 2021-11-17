@@ -6,7 +6,8 @@ import {
   Radio,
   Input,
   Row,
-  Col
+  Col,
+  Select
 } from 'antd'
 import {
   ShoppingCartOutlined,
@@ -16,6 +17,7 @@ import {
 
 const { Header, Sider, Content } = AntdLayout
 const { Search } = Input
+const { Option } = Select
 
 type Layout = 'grid' | 'rows'
 type Props = {
@@ -23,14 +25,35 @@ type Props = {
   onItemLayoutChange: (layout: Layout) => void
   itemLayout: Layout
   onSearch: (searchTerm: string) => void
+  onSort: (sortingKey?: string, order?: string) => void
 }
 
 const Layout = ({
   children,
   itemLayout,
   onItemLayoutChange,
-  onSearch
+  onSearch,
+  onSort
 }: Props) => {
+  const SORTING_VALUES_FOR_API = {
+    'revenue-high': {
+      key: 'average_monthly_gross_revenue',
+      order: 'DESC'
+    },
+    'revenue-low': {
+      key: 'average_monthly_gross_revenue',
+      order: 'ASC'
+    },
+    'profit-high': {
+      key: 'average_monthly_net_profit',
+      order: 'DESC'
+    },
+    'profit-low': {
+      key: 'average_monthly_net_profit',
+      order: 'ASC'
+    }
+  }
+
   return (
     <AntdLayout>
       <Affix>
@@ -66,6 +89,24 @@ const Layout = ({
                   <Radio.Button value="grid"><AppstoreOutlined /></Radio.Button>
                   <Radio.Button value="rows"><MenuOutlined /></Radio.Button>
                 </Radio.Group>
+              </Col>
+              <Col span={8}>
+                <Select
+                  allowClear
+                  placeholder='Sort By:'
+                  style={{ width: '100%' }}
+                  onSelect={(value: 'revenue-high' | 'revenue-low' | 'profit-high' | 'profit-low') => {
+                    const { key, order } = SORTING_VALUES_FOR_API[value]
+
+                    onSort(key, order)
+                  }}
+                  onClear={() => onSort()}
+                >
+                  <Option value='revenue-high'>Avg Monthly Revenue (High to Low)</Option>
+                  <Option value='revenue-low'>Avg Monthly Revenue (Low to High)</Option>
+                  <Option value='profit-high'>Avg Monthly Profit (High to Low)</Option>
+                  <Option value='profit-low'>Avg Monthly Profit (Low to High)</Option>
+                </Select>
               </Col>
             </Row>
           </Header>

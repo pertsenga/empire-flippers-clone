@@ -19,15 +19,20 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [totalListings, setTotalListings] = useState<number>(0)
+  const [sortBy, setSortBy] = useState<{key?: string, order?: string}>({})
 
   useEffect(() => {
     setIsLoading(true)
 
-    fetch(`${LISTINGS_API}?${new URLSearchParams({
+    const queryParams = new URLSearchParams({
       q: searchTerm,
       limit: '10',
-      page: currentPage.toString()
-    })}`)
+      page: currentPage.toString(),
+      sort: sortBy.key || '',
+      order: sortBy.order || ''
+    })
+
+    fetch(`${LISTINGS_API}?${queryParams}`)
       .then(res => res.json())
       .then((res: ListingApiResult) => {
         if (res.errors.length) {
@@ -42,7 +47,7 @@ const App = () => {
         message.error(error.message, 3)
       })
       .finally(() => setIsLoading(false))
-  }, [searchTerm, currentPage])
+  }, [searchTerm, currentPage, sortBy])
 
 
   return (
@@ -52,6 +57,9 @@ const App = () => {
       onSearch={searchTerm => {
         setCurrentPage(1)
         setSearchTerm(searchTerm)
+      }}
+      onSort={(key, order) => {
+        setSortBy({ key: key, order: order })
       }}
     >
       <Spin spinning={isLoading}>
