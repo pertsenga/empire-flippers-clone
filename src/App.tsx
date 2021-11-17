@@ -28,6 +28,8 @@ const App = () => {
       })
   }, [])
 
+  console.log(listings)
+
   return (
     <Layout>
       <List
