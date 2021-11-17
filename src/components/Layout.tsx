@@ -3,7 +3,10 @@ import {
   Affix,
   Layout as AntdLayout,
   Menu,
-  Radio
+  Radio,
+  Input,
+  Row,
+  Col
 } from 'antd'
 import {
   ShoppingCartOutlined,
@@ -12,18 +15,21 @@ import {
 } from '@ant-design/icons'
 
 const { Header, Sider, Content } = AntdLayout
+const { Search } = Input
 
 type Layout = 'grid' | 'rows'
 type Props = {
   children: React.ReactNode
   onItemLayoutChange: (layout: Layout) => void
   itemLayout: Layout
+  onSearch: (searchTerm: string) => void
 }
 
 const Layout = ({
   children,
   itemLayout,
-  onItemLayoutChange
+  onItemLayoutChange,
+  onSearch
 }: Props) => {
   return (
     <AntdLayout>
@@ -40,16 +46,28 @@ const Layout = ({
       <AntdLayout style={{ minHeight: '100vh' }}>
         <Affix>
           <Header>
-            <Radio.Group
-              defaultValue={itemLayout}
-              buttonStyle='solid'
-              onChange={() => {
-                onItemLayoutChange(itemLayout === 'grid' ? 'rows' : 'grid')
-              }}
-            >
-              <Radio.Button value="grid"><AppstoreOutlined /></Radio.Button>
-              <Radio.Button value="rows"><MenuOutlined /></Radio.Button>
-            </Radio.Group>
+            <Row align='middle' gutter={24}>
+              <Col span={8}>
+                <Search
+                  placeholder="Search Listings"
+                  onSearch={onSearch}
+                  allowClear
+                  style={{ marginTop: 16 }}
+                />
+              </Col>
+              <Col>
+                <Radio.Group
+                  defaultValue={itemLayout}
+                  buttonStyle='solid'
+                  onChange={() => {
+                    onItemLayoutChange(itemLayout === 'grid' ? 'rows' : 'grid')
+                  }}
+                >
+                  <Radio.Button value="grid"><AppstoreOutlined /></Radio.Button>
+                  <Radio.Button value="rows"><MenuOutlined /></Radio.Button>
+                </Radio.Group>
+              </Col>
+            </Row>
           </Header>
         </Affix>
         <Content>
