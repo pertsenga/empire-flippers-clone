@@ -2,17 +2,29 @@ import React from 'react'
 import {
   Affix,
   Layout as AntdLayout,
-  Menu
+  Menu,
+  Radio
 } from 'antd'
-import { ShoppingCartOutlined } from '@ant-design/icons'
+import {
+  ShoppingCartOutlined,
+  AppstoreOutlined,
+  MenuOutlined
+} from '@ant-design/icons'
 
-const { Sider, Content } = AntdLayout
+const { Header, Sider, Content } = AntdLayout
 
+type Layout = 'grid' | 'rows'
 type Props = {
   children: React.ReactNode
+  onItemLayoutChange: (layout: Layout) => void
+  itemLayout: Layout
 }
 
-const Layout = ({ children }: Props) => {
+const Layout = ({
+  children,
+  itemLayout,
+  onItemLayoutChange
+}: Props) => {
   return (
     <AntdLayout>
       <Affix>
@@ -26,6 +38,20 @@ const Layout = ({ children }: Props) => {
         </Sider>
       </Affix>
       <AntdLayout style={{ minHeight: '100vh' }}>
+        <Affix>
+          <Header>
+            <Radio.Group
+              defaultValue={itemLayout}
+              buttonStyle='solid'
+              onChange={() => {
+                onItemLayoutChange(itemLayout === 'grid' ? 'rows' : 'grid')
+              }}
+            >
+              <Radio.Button value="grid"><AppstoreOutlined /></Radio.Button>
+              <Radio.Button value="rows"><MenuOutlined /></Radio.Button>
+            </Radio.Group>
+          </Header>
+        </Affix>
         <Content>
           <div style={{ margin: 32, padding: 24, background: 'white', minHeight: '90%' }}>
             {children}

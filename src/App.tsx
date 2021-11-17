@@ -12,6 +12,7 @@ const LISTINGS_API = 'https://api.empireflippers.com/api/v1/listings/list'
 
 const App = () => {
   const [listings, setListings] = useState<Listing[]>([])
+  const [isGridLayout, setIsGridLayout] = useState<boolean>(true)
 
   useEffect(() => {
     fetch(LISTINGS_API)
@@ -31,10 +32,13 @@ const App = () => {
   console.log(listings)
 
   return (
-    <Layout>
+    <Layout
+      onItemLayoutChange={layout => setIsGridLayout(layout === 'grid')}
+      itemLayout={isGridLayout ? 'grid' : 'rows'}
+    >
       <List
         dataSource={listings}
-        grid={{ gutter: 14, column: 2 }}
+        grid={isGridLayout ? { gutter: 14, column: 2 } : undefined}
         renderItem={listing => (
           <List.Item>
             <ListingCard data={listing} />
